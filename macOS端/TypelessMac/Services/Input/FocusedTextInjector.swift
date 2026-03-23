@@ -41,6 +41,7 @@ enum TextInjectionStrategy: String {
 enum TextInjectionError: LocalizedError {
     case accessibilityUnavailable
     case noFocusedInput
+    case appInternalInput
     case unreadableValue
     case unsupportedTarget
     case updateFailed(AXError)
@@ -53,6 +54,8 @@ enum TextInjectionError: LocalizedError {
             return "需要辅助功能权限才能锁定并写入目标输入框。"
         case .noFocusedInput:
             return "开始录音时没有找到可写入的输入目标。"
+        case .appInternalInput:
+            return "当前焦点在 Typeless 自己的输入框里，已跳过自动锁定。"
         case .unreadableValue:
             return "当前输入目标不支持读取文本值。"
         case .unsupportedTarget:
@@ -68,6 +71,8 @@ enum TextInjectionError: LocalizedError {
 }
 
 final class FocusedTextInjector {
+    private let appBundleIdentifier = "com.psyhitech.typeless.mac"
+
     func captureFocusedInputTarget() throws -> FocusedInputTarget {
         guard AXIsProcessTrusted() else {
             throw TextInjectionError.accessibilityUnavailable
@@ -93,6 +98,10 @@ final class FocusedTextInjector {
         let runningApplication = NSWorkspace.shared.frontmostApplication
         let applicationElement = runningApplication.map { AXUIElementCreateApplication($0.processIdentifier) }
         let role = try? stringAttribute(kAXRoleAttribute as CFString, of: focusedElement)
+
+        if runningApplication?.bundleIdentifier == appBundleIdentifier {
+            throw TextInjectionError.appInternalInput
+        }
 
         return FocusedInputTarget(
             focusedElement: focusedElement,

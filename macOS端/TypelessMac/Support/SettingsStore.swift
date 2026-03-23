@@ -32,7 +32,14 @@ enum TriggerMode: String, CaseIterable, Identifiable {
 
 final class SettingsStore: ObservableObject {
     @Published var apiKey: String {
-        didSet { defaults.set(apiKey, forKey: Keys.apiKey) }
+        didSet {
+            let sanitized = Self.sanitizedAPIKeyInput(apiKey, fallback: oldValue)
+            if sanitized != apiKey {
+                apiKey = sanitized
+                return
+            }
+            defaults.set(apiKey, forKey: Keys.apiKey)
+        }
     }
 
     @Published var region: DashScopeRegion {
@@ -97,6 +104,14 @@ final class SettingsStore: ObservableObject {
         self.vocabularyID = environment["DASHSCOPE_VOCABULARY_ID"] ?? defaults.string(forKey: Keys.vocabularyID) ?? ""
         self.languageHintsText = environment["DASHSCOPE_LANGUAGE_HINTS"] ?? defaults.string(forKey: Keys.languageHintsText) ?? "zh"
         self.triggerMode = TriggerMode(rawValue: environment["TYPELESS_TRIGGER_MODE"] ?? defaults.string(forKey: Keys.triggerMode) ?? "") ?? .fnHold
+    }
+
+    private static func sanitizedAPIKeyInput(_ value: String, fallback: String) -> String {
+        let containsMaskGlyph = value.contains("•") || value.contains("⦁")
+        if containsMaskGlyph {
+            return fallback
+        }
+        return value.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 

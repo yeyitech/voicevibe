@@ -2,7 +2,7 @@ import AVFAudio
 import Foundation
 
 final class MacAudioCaptureService {
-    private let engine = AVAudioEngine()
+    private var engine: AVAudioEngine?
     private let bufferLock = NSLock()
 
     private let outputFormat = AVAudioFormat(
@@ -39,6 +39,10 @@ final class MacAudioCaptureService {
     func startCapture() throws {
         guard !isCapturing else { return }
 
+        teardownEngine()
+        let engine = AVAudioEngine()
+        self.engine = engine
+
         let inputNode = engine.inputNode
         let inputFormat = inputNode.inputFormat(forBus: 0)
 
@@ -68,8 +72,7 @@ final class MacAudioCaptureService {
 
     func stopCapture() -> Data {
         if isCapturing {
-            engine.inputNode.removeTap(onBus: 0)
-            engine.stop()
+            teardownEngine()
             isCapturing = false
         }
 
@@ -82,8 +85,7 @@ final class MacAudioCaptureService {
 
     func cancelCapture() {
         if isCapturing {
-            engine.inputNode.removeTap(onBus: 0)
-            engine.stop()
+            teardownEngine()
             isCapturing = false
         }
         bufferLock.lock()
@@ -163,6 +165,14 @@ final class MacAudioCaptureService {
         let frameLength = Int(convertedBuffer.frameLength)
         let bytesPerFrame = Int(outputFormat.streamDescription.pointee.mBytesPerFrame)
         return Data(bytes: channelData[0], count: frameLength * bytesPerFrame)
+    }
+
+    private func teardownEngine() {
+        if let engine {
+            engine.inputNode.removeTap(onBus: 0)
+            engine.stop()
+        }
+        engine = nil
     }
 }
 
