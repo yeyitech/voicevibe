@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <rect width="1024" height="1024" rx="224" fill="#FFFFFF"/>
+  <g transform="translate(170 170) scale(24.43)">
+    <path
+      d="M3 15 Q4 5 14 4 Q23 3 25 13 Q24 22 15 24 Q11 25 7 20"
+      stroke="#111111"
+      stroke-width="3.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+    <path
+      d="M8 16 Q9 10 13 10 Q17 10 18 14"
+      stroke="#111111"
+      stroke-width="2.4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+</svg>

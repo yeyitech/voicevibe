@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B45DBB5E93F299349DEBBDD7"
+               BlueprintIdentifier = "1F3620F724F75477BE0E8AD3"
                BuildableName = "VoiceVibeMac.app"
                BlueprintName = "VoiceVibeMac"
                ReferencedContainer = "container:VoiceVibeMac.xcodeproj">
@@ -30,7 +30,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B45DBB5E93F299349DEBBDD7"
+            BlueprintIdentifier = "1F3620F724F75477BE0E8AD3"
             BuildableName = "VoiceVibeMac.app"
             BlueprintName = "VoiceVibeMac"
             ReferencedContainer = "container:VoiceVibeMac.xcodeproj">
@@ -53,7 +53,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B45DBB5E93F299349DEBBDD7"
+            BlueprintIdentifier = "1F3620F724F75477BE0E8AD3"
             BuildableName = "VoiceVibeMac.app"
             BlueprintName = "VoiceVibeMac"
             ReferencedContainer = "container:VoiceVibeMac.xcodeproj">
@@ -70,7 +70,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B45DBB5E93F299349DEBBDD7"
+            BlueprintIdentifier = "1F3620F724F75477BE0E8AD3"
             BuildableName = "VoiceVibeMac.app"
             BlueprintName = "VoiceVibeMac"
             ReferencedContainer = "container:VoiceVibeMac.xcodeproj">

@@ -28,6 +28,8 @@ target.build_configurations.each do |config|
   settings['MACOSX_DEPLOYMENT_TARGET'] = '14.0'
   settings['CODE_SIGN_STYLE'] = 'Automatic'
   settings['GENERATE_INFOPLIST_FILE'] = 'YES'
+  settings['ASSETCATALOG_COMPILER_APPICON_NAME'] = 'AppIcon'
+  settings['ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME'] = 'AccentColor'
   settings['INFOPLIST_KEY_CFBundleDisplayName'] = 'VoiceVibe'
   settings['INFOPLIST_KEY_NSMicrophoneUsageDescription'] = 'VoiceVibe needs microphone access for real-time transcription.'
   settings['INFOPLIST_KEY_NSHighResolutionCapable'] = 'YES'
@@ -60,12 +62,22 @@ source_files = %w[
   Support/SettingsStore.swift
 ]
 
+resource_files = %w[
+  Resources/Assets.xcassets
+]
+
 file_refs = {}
 source_files.each do |path|
   file_refs[path] = main_group.new_file(path)
 end
 
 target.add_file_references(source_files.map { |path| file_refs.fetch(path) })
+
+resource_files.each do |path|
+  file_refs[path] = main_group.new_file(path)
+end
+
+target.resources_build_phase.add_file_reference(file_refs.fetch('Resources/Assets.xcassets'))
 
 scheme = Xcodeproj::XCScheme.new
 scheme.configure_with_targets(target, nil, launch_target: target)
