@@ -2,12 +2,12 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-PROJECT_PATH="$ROOT_DIR/macos/TypelessMac.xcodeproj"
-SCHEME="TypelessMac"
+PROJECT_PATH="$ROOT_DIR/macos/VoiceVibeMac.xcodeproj"
+SCHEME="VoiceVibeMac"
 DERIVED_DATA_PATH="$ROOT_DIR/build/macos-release"
 DIST_DIR="$ROOT_DIR/dist"
-APP_NAME="Typeless Mac Dev.app"
-ZIP_NAME="Typeless-Mac-Dev.zip"
+APP_NAME="VoiceVibe Dev.app"
+ZIP_NAME="VoiceVibe-Dev.zip"
 INSTALL_DIR="$HOME/Applications"
 
 mkdir -p "$DIST_DIR" "$INSTALL_DIR"
@@ -32,7 +32,7 @@ xcodebuild \
   CODE_SIGNING_ALLOWED=NO \
   build
 
-BUILT_APP="$DERIVED_DATA_PATH/Build/Products/Release/TypelessMac.app"
+BUILT_APP="$DERIVED_DATA_PATH/Build/Products/Release/VoiceVibeMac.app"
 
 if [ ! -d "$BUILT_APP" ]; then
   echo "Release app not found: $BUILT_APP" >&2

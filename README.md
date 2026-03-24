@@ -1,6 +1,6 @@
-# Typeless
+# VoiceVibe
 
-Typeless 是一个双端验证仓：
+VoiceVibe 是一个双端验证仓：
 
 - `ios/`
   iOS P0 工程，验证主 App 录音、阿里云实时 ASR、键盘扩展协同
@@ -11,22 +11,16 @@ Typeless 是一个双端验证仓：
 
 ## 仓库结构
 
-- `ios/TypelessApp.xcodeproj`
+- `ios/VoiceVibeApp.xcodeproj`
   iOS 工程
-- `macos/TypelessMac.xcodeproj`
+- `macos/VoiceVibeMac.xcodeproj`
   macOS 工程
-- `ios/TypelessApp/`
+- `ios/VoiceVibeApp/`
   iOS 源码
-- `macos/TypelessMac/`
+- `macos/VoiceVibeMac/`
   macOS 源码
 - `scripts/build_macos_release.sh`
   一键构建并打包最新 macOS 版本
-- `ARCHITECTURE.md`
-  iOS P0 架构说明
-- `PRD.md`
-  当前产品和验证范围
-- `FUN_ASR_REALTIME.md`
-  阿里云 Fun-ASR Realtime 协议要点
 
 ## macOS 安装
 
@@ -35,13 +29,13 @@ Typeless 是一个双端验证仓：
 固定路径：
 
 ```bash
-~/Applications/Typeless\ Mac\ Dev.app
+~/Applications/VoiceVibe\ Dev.app
 ```
 
 打开：
 
 ```bash
-open "$HOME/Applications/Typeless Mac Dev.app"
+open "$HOME/Applications/VoiceVibe Dev.app"
 ```
 
 ### 2. 重新构建最新版本
@@ -56,18 +50,18 @@ open "$HOME/Applications/Typeless Mac Dev.app"
 
 - 用 `Release` 配置构建最新 macOS app
 - 产出本地安装包到 `dist/`
-- 同步一份固定开发版到 `~/Applications/Typeless Mac Dev.app`
+- 同步一份固定开发版到 `~/Applications/VoiceVibe Dev.app`
 
 构建完成后，主要产物在：
 
 ```bash
-dist/Typeless Mac Dev.app
-dist/Typeless-Mac-Dev.zip
+dist/VoiceVibe Dev.app
+dist/VoiceVibe-Dev.zip
 ```
 
 ## macOS 首次使用
 
-启动前或启动后，需要给 `Typeless Mac Dev.app` 打开权限：
+启动前或启动后，需要给 `VoiceVibe Dev.app` 打开权限：
 
 - `隐私与安全性 -> 麦克风`
 - `隐私与安全性 -> 输入监控`
@@ -104,7 +98,7 @@ DASHSCOPE_REGION=beijing
 DASHSCOPE_MODEL=fun-asr-realtime
 DASHSCOPE_LANGUAGE_HINTS=zh,en
 DASHSCOPE_VOCABULARY_ID=你的热词表ID
-TYPELESS_TRIGGER_MODE=fn_hold
+VOICEVIBE_TRIGGER_MODE=fn_hold
 ```
 
 注意：
@@ -115,8 +109,8 @@ TYPELESS_TRIGGER_MODE=fn_hold
 
 ## iOS 本地运行
 
-1. 打开 `ios/TypelessApp.xcodeproj`
-2. 在 Xcode 里选择 `TypelessApp` Scheme
+1. 打开 `ios/VoiceVibeApp.xcodeproj`
+2. 在 Xcode 里选择 `VoiceVibeApp` Scheme
 3. 在 `Run > Arguments` 里配置：
 
 ```bash
@@ -146,7 +140,4 @@ DASHSCOPE_API_KEY=你的阿里云 API Key
 
 ## 补充文档
 
-- [ARCHITECTURE.md](/Users/codefriday/workspace/project/typeless/ARCHITECTURE.md)
-- [PRD.md](/Users/codefriday/workspace/project/typeless/PRD.md)
-- [FUN_ASR_REALTIME.md](/Users/codefriday/workspace/project/typeless/FUN_ASR_REALTIME.md)
-- [macos/README.md](/Users/codefriday/workspace/project/typeless/macos/README.md)
+- [macos/README.md](macos/README.md)

@@ -4,8 +4,8 @@
 require 'xcodeproj'
 
 ROOT = File.expand_path('..', __dir__)
-PROJECT_NAME = 'TypelessApp'
-KEYBOARD_TARGET_NAME = 'TypelessKeyboard'
+PROJECT_NAME = 'VoiceVibeApp'
+KEYBOARD_TARGET_NAME = 'VoiceVibeKeyboard'
 PROJECT_PATH = File.join(ROOT, "#{PROJECT_NAME}.xcodeproj")
 
 abort("#{PROJECT_NAME}.xcodeproj already exists. Remove it before regenerating.") if File.exist?(PROJECT_PATH)
@@ -22,7 +22,7 @@ keyboard_target.product_reference.name = "#{KEYBOARD_TARGET_NAME}.appex"
 
 app_target.build_configurations.each do |config|
   settings = config.build_settings
-  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.psyhitech.typeless'
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.psyhitech.voicevibe'
   settings['DEVELOPMENT_TEAM'] = 'DQ362F38WB'
   settings['PRODUCT_NAME'] = PROJECT_NAME
   settings['MARKETING_VERSION'] = '0.1.0'
@@ -32,9 +32,9 @@ app_target.build_configurations.each do |config|
   settings['TARGETED_DEVICE_FAMILY'] = '1,2'
   settings['CODE_SIGN_STYLE'] = 'Automatic'
   settings['GENERATE_INFOPLIST_FILE'] = 'YES'
-  settings['INFOPLIST_KEY_CFBundleDisplayName'] = 'Typeless'
+  settings['INFOPLIST_KEY_CFBundleDisplayName'] = 'VoiceVibe'
   settings['INFOPLIST_KEY_LSRequiresIPhoneOS'] = 'YES'
-  settings['INFOPLIST_KEY_NSMicrophoneUsageDescription'] = 'Typeless needs microphone access for real-time transcription.'
+  settings['INFOPLIST_KEY_NSMicrophoneUsageDescription'] = 'VoiceVibe needs microphone access for real-time transcription.'
   settings['INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents'] = 'YES'
   settings['INFOPLIST_KEY_UILaunchScreen_Generation'] = 'YES'
   settings['INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone'] = [
@@ -48,13 +48,13 @@ app_target.build_configurations.each do |config|
   ]
   settings['ASSETCATALOG_COMPILER_APPICON_NAME'] = 'AppIcon'
   settings['ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME'] = 'AccentColor'
-  settings['CODE_SIGN_ENTITLEMENTS'] = 'TypelessApp/App/TypelessApp.entitlements'
+  settings['CODE_SIGN_ENTITLEMENTS'] = 'VoiceVibeApp/App/VoiceVibeApp.entitlements'
   settings['SWIFT_EMIT_LOC_STRINGS'] = 'YES'
 end
 
 keyboard_target.build_configurations.each do |config|
   settings = config.build_settings
-  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.psyhitech.typeless.keyboard'
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.psyhitech.voicevibe.keyboard'
   settings['DEVELOPMENT_TEAM'] = 'DQ362F38WB'
   settings['PRODUCT_NAME'] = KEYBOARD_TARGET_NAME
   settings['MARKETING_VERSION'] = '0.1.0'
@@ -64,8 +64,8 @@ keyboard_target.build_configurations.each do |config|
   settings['TARGETED_DEVICE_FAMILY'] = '1,2'
   settings['CODE_SIGN_STYLE'] = 'Automatic'
   settings['GENERATE_INFOPLIST_FILE'] = 'NO'
-  settings['INFOPLIST_FILE'] = 'TypelessApp/KeyboardExtension/Info.plist'
-  settings['CODE_SIGN_ENTITLEMENTS'] = 'TypelessApp/KeyboardExtension/TypelessKeyboard.entitlements'
+  settings['INFOPLIST_FILE'] = 'VoiceVibeApp/KeyboardExtension/Info.plist'
+  settings['CODE_SIGN_ENTITLEMENTS'] = 'VoiceVibeApp/KeyboardExtension/VoiceVibeKeyboard.entitlements'
   settings['APPLICATION_EXTENSION_API_ONLY'] = 'YES'
   settings['SKIP_INSTALL'] = 'YES'
   settings['LD_RUNPATH_SEARCH_PATHS'] = [
@@ -81,7 +81,7 @@ main_group.set_source_tree('<group>')
 main_group.set_path(PROJECT_NAME)
 
 app_source_files = %w[
-  App/TypelessApp.swift
+  App/VoiceVibeApp.swift
   Features/Home/HomeView.swift
   Features/Home/RecorderViewModel.swift
   Features/Home/SettingsView.swift
@@ -104,9 +104,9 @@ keyboard_source_files = %w[
 ]
 
 other_visible_files = %w[
-  App/TypelessApp.entitlements
+  App/VoiceVibeApp.entitlements
   KeyboardExtension/Info.plist
-  KeyboardExtension/TypelessKeyboard.entitlements
+  KeyboardExtension/VoiceVibeKeyboard.entitlements
 ]
 
 file_refs = {}

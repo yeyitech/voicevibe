@@ -1,4 +1,4 @@
-# Typeless macOS
+# VoiceVibe macOS
 
 这是和 iOS 端完全解耦的 macOS 独立工程。
 
@@ -12,9 +12,9 @@
 
 ## 目录
 
-- `TypelessMac/`
+- `VoiceVibeMac/`
   macOS 独立源码
-- `TypelessMac.xcodeproj`
+- `VoiceVibeMac.xcodeproj`
   macOS 工程
 - `scripts/generate_xcodeproj.rb`
   从源码重新生成 Xcode 工程
@@ -31,7 +31,7 @@
 
 ```bash
 cd macos
-xcodebuild -project TypelessMac.xcodeproj -scheme TypelessMac -configuration Release CODE_SIGNING_ALLOWED=NO build
+xcodebuild -project VoiceVibeMac.xcodeproj -scheme VoiceVibeMac -configuration Release CODE_SIGNING_ALLOWED=NO build
 ```
 
 ## 构建产物
@@ -39,14 +39,14 @@ xcodebuild -project TypelessMac.xcodeproj -scheme TypelessMac -configuration Rel
 脚本构建后会生成：
 
 ```bash
-dist/Typeless Mac Dev.app
-dist/Typeless-Mac-Dev.zip
+dist/VoiceVibe Dev.app
+dist/VoiceVibe-Dev.zip
 ```
 
 同时会同步一份固定开发版到：
 
 ```bash
-~/Applications/Typeless Mac Dev.app
+~/Applications/VoiceVibe Dev.app
 ```
 
 ## 首次安装 / 使用
@@ -54,7 +54,7 @@ dist/Typeless-Mac-Dev.zip
 1. 打开：
 
 ```bash
-open "$HOME/Applications/Typeless Mac Dev.app"
+open "$HOME/Applications/VoiceVibe Dev.app"
 ```
 
 2. 授权：
@@ -80,7 +80,7 @@ DASHSCOPE_REGION=beijing
 DASHSCOPE_MODEL=fun-asr-realtime
 DASHSCOPE_LANGUAGE_HINTS=zh,en
 DASHSCOPE_VOCABULARY_ID=你的热词表ID
-TYPELESS_TRIGGER_MODE=fn_hold
+VOICEVIBE_TRIGGER_MODE=fn_hold
 ```
 
 说明：

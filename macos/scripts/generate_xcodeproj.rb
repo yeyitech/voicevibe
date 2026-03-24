@@ -4,7 +4,7 @@
 require 'xcodeproj'
 
 ROOT = File.expand_path('..', __dir__)
-PROJECT_NAME = 'TypelessMac'
+PROJECT_NAME = 'VoiceVibeMac'
 PROJECT_PATH = File.join(ROOT, "#{PROJECT_NAME}.xcodeproj")
 
 abort("#{PROJECT_NAME}.xcodeproj already exists. Remove it before regenerating.") if File.exist?(PROJECT_PATH)
@@ -19,7 +19,7 @@ target.product_reference.name = "#{PROJECT_NAME}.app"
 
 target.build_configurations.each do |config|
   settings = config.build_settings
-  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.psyhitech.typeless.mac'
+  settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.psyhitech.voicevibe.mac'
   settings['DEVELOPMENT_TEAM'] = 'DQ362F38WB'
   settings['PRODUCT_NAME'] = PROJECT_NAME
   settings['MARKETING_VERSION'] = '0.1.0'
@@ -28,8 +28,8 @@ target.build_configurations.each do |config|
   settings['MACOSX_DEPLOYMENT_TARGET'] = '14.0'
   settings['CODE_SIGN_STYLE'] = 'Automatic'
   settings['GENERATE_INFOPLIST_FILE'] = 'YES'
-  settings['INFOPLIST_KEY_CFBundleDisplayName'] = 'Typeless Mac'
-  settings['INFOPLIST_KEY_NSMicrophoneUsageDescription'] = 'Typeless Mac needs microphone access for real-time transcription.'
+  settings['INFOPLIST_KEY_CFBundleDisplayName'] = 'VoiceVibe'
+  settings['INFOPLIST_KEY_NSMicrophoneUsageDescription'] = 'VoiceVibe needs microphone access for real-time transcription.'
   settings['INFOPLIST_KEY_NSHighResolutionCapable'] = 'YES'
   settings['LD_RUNPATH_SEARCH_PATHS'] = [
     '$(inherited)',
@@ -43,7 +43,7 @@ main_group.set_source_tree('<group>')
 main_group.set_path(PROJECT_NAME)
 
 source_files = %w[
-  App/TypelessMacApp.swift
+  App/VoiceVibeMacApp.swift
   App/MacAppModel.swift
   Features/Main/MainView.swift
   Features/Main/MenuBarView.swift
