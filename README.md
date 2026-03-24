@@ -2,19 +2,23 @@
 
 Typeless 是一个双端验证仓：
 
-- `TypelessApp/`
+- `ios/`
   iOS P0 工程，验证主 App 录音、阿里云实时 ASR、键盘扩展协同
-- `macOS端/`
+- `macos/`
   macOS 独立工程，验证全局按键唤起、录音结束后整段转写、自动插字与剪贴板回退
 
 当前推荐直接使用 macOS 端。
 
 ## 仓库结构
 
-- `TypelessApp.xcodeproj`
+- `ios/TypelessApp.xcodeproj`
   iOS 工程
-- `macOS端/TypelessMac.xcodeproj`
+- `macos/TypelessMac.xcodeproj`
   macOS 工程
+- `ios/TypelessApp/`
+  iOS 源码
+- `macos/TypelessMac/`
+  macOS 源码
 - `scripts/build_macos_release.sh`
   一键构建并打包最新 macOS 版本
 - `ARCHITECTURE.md`
@@ -111,7 +115,7 @@ TYPELESS_TRIGGER_MODE=fn_hold
 
 ## iOS 本地运行
 
-1. 打开 `TypelessApp.xcodeproj`
+1. 打开 `ios/TypelessApp.xcodeproj`
 2. 在 Xcode 里选择 `TypelessApp` Scheme
 3. 在 `Run > Arguments` 里配置：
 
@@ -145,4 +149,4 @@ DASHSCOPE_API_KEY=你的阿里云 API Key
 - [ARCHITECTURE.md](/Users/codefriday/workspace/project/typeless/ARCHITECTURE.md)
 - [PRD.md](/Users/codefriday/workspace/project/typeless/PRD.md)
 - [FUN_ASR_REALTIME.md](/Users/codefriday/workspace/project/typeless/FUN_ASR_REALTIME.md)
-- [macOS端/README.md](/Users/codefriday/workspace/project/typeless/macOS端/README.md)
+- [macos/README.md](/Users/codefriday/workspace/project/typeless/macos/README.md)

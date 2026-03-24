@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-PROJECT_PATH="$ROOT_DIR/macOS端/TypelessMac.xcodeproj"
+PROJECT_PATH="$ROOT_DIR/macos/TypelessMac.xcodeproj"
 SCHEME="TypelessMac"
 DERIVED_DATA_PATH="$ROOT_DIR/build/macos-release"
 DIST_DIR="$ROOT_DIR/dist"
