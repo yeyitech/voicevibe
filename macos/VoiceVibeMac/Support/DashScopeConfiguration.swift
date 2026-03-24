@@ -31,9 +31,10 @@ struct DashScopeConfiguration {
     let model: String
     let vocabularyID: String?
     let languageHints: [String]
+    let customWebSocketURL: URL?
 
     var websocketURL: URL {
-        region.websocketURL
+        customWebSocketURL ?? region.websocketURL
     }
 }
 

@@ -29,13 +29,13 @@ VoiceVibe 是一个双端验证仓：
 固定路径：
 
 ```bash
-~/Applications/VoiceVibe\ Dev.app
+~/Applications/VoiceVibe.app
 ```
 
 打开：
 
 ```bash
-open "$HOME/Applications/VoiceVibe Dev.app"
+open "$HOME/Applications/VoiceVibe.app"
 ```
 
 ### 2. 重新构建最新版本
@@ -50,18 +50,18 @@ open "$HOME/Applications/VoiceVibe Dev.app"
 
 - 用 `Release` 配置构建最新 macOS app
 - 产出本地安装包到 `dist/`
-- 同步一份固定开发版到 `~/Applications/VoiceVibe Dev.app`
+- 同步一份固定安装版到 `~/Applications/VoiceVibe.app`
 
 构建完成后，主要产物在：
 
 ```bash
-dist/VoiceVibe Dev.app
-dist/VoiceVibe-Dev.zip
+dist/VoiceVibe.app
+dist/VoiceVibe.zip
 ```
 
 ## macOS 首次使用
 
-启动前或启动后，需要给 `VoiceVibe Dev.app` 打开权限：
+启动前或启动后，需要给 `VoiceVibe.app` 打开权限：
 
 - `隐私与安全性 -> 麦克风`
 - `隐私与安全性 -> 输入监控`

@@ -13,10 +13,16 @@ struct KeyboardRootView: View {
     let onInsertNewLine: () -> Void
     let onDeleteBackward: () -> Void
 
+    private let keyboardBackground = Color(uiColor: .systemGray5)
+    private let raisedSurface = Color(uiColor: .systemBackground)
+    private let utilitySurface = Color(uiColor: .systemGray4)
+    private let mutedSurface = Color(uiColor: .tertiarySystemFill)
+    private let subtleText = Color(uiColor: .secondaryLabel)
+    private let primaryText = Color(uiColor: .label)
+
     var body: some View {
         GeometryReader { geometry in
             let metrics = Metrics(size: geometry.size)
-            let keyboardBackground = Color(uiColor: .systemBackground)
 
             ZStack {
                 keyboardBackground
@@ -67,7 +73,7 @@ struct KeyboardRootView: View {
 
                 Text("VoiceVibe")
                     .font(.system(size: metrics.titleFontSize, weight: .semibold))
-                    .foregroundStyle(.black)
+                    .foregroundStyle(primaryText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.85)
             }
@@ -89,7 +95,7 @@ struct KeyboardRootView: View {
             if viewModel.visualState != .processing {
                 Text(viewModel.primaryPrompt)
                     .font(.system(size: metrics.promptFontSize, weight: .medium))
-                    .foregroundStyle(viewModel.visualState == .error ? .red : .black.opacity(0.72))
+                    .foregroundStyle(viewModel.visualState == .error ? .red : subtleText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
             }
@@ -121,16 +127,16 @@ struct KeyboardRootView: View {
     private func thinkingPill(metrics: Metrics) -> some View {
         ZStack(alignment: .trailing) {
             Capsule(style: .continuous)
-                .fill(Color.black.opacity(0.6))
+                .fill(utilitySurface)
                 .frame(width: metrics.thinkingWidth, height: metrics.thinkingHeight)
 
             Text("Thinking")
                 .font(.system(size: metrics.thinkingFontSize, weight: .semibold))
-                .foregroundStyle(.white.opacity(0.72))
+                .foregroundStyle(subtleText)
                 .frame(width: metrics.thinkingWidth, height: metrics.thinkingHeight)
 
             Capsule(style: .continuous)
-                .fill(.black)
+                .fill(mutedSurface)
                 .frame(width: metrics.thinkingAccentWidth, height: metrics.thinkingHeight)
         }
     }
@@ -138,59 +144,59 @@ struct KeyboardRootView: View {
     private func unavailablePrimaryButton(metrics: Metrics) -> some View {
         ZStack {
             Capsule(style: .continuous)
-                .fill(Color.black.opacity(0.82))
+                .fill(utilitySurface)
                 .frame(width: metrics.primaryWidth, height: metrics.primaryHeight)
 
             Image(systemName: viewModel.primaryButtonSystemImage)
                 .font(.system(size: metrics.primaryIconSize, weight: .medium))
-                .foregroundStyle(.white.opacity(0.9))
+                .foregroundStyle(primaryText)
         }
     }
 
     private func idlePrimaryButton(metrics: Metrics) -> some View {
         ZStack {
             Capsule(style: .continuous)
-                .fill(.black)
+                .fill(raisedSurface)
                 .frame(width: metrics.primaryWidth, height: metrics.primaryHeight)
 
             Image(systemName: viewModel.primaryButtonSystemImage)
                 .font(.system(size: metrics.primaryIconSize, weight: .medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(primaryText)
         }
     }
 
     private func completedPrimaryButton(metrics: Metrics) -> some View {
         ZStack {
             Capsule(style: .continuous)
-                .fill(.black)
+                .fill(raisedSurface)
                 .frame(width: metrics.completedWidth, height: metrics.primaryHeight)
 
             Image(systemName: viewModel.primaryButtonSystemImage)
                 .font(.system(size: metrics.completedIconSize, weight: .medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(primaryText)
         }
     }
 
     private func errorPrimaryButton(metrics: Metrics) -> some View {
         ZStack {
             Capsule(style: .continuous)
-                .fill(.black)
+                .fill(raisedSurface)
                 .frame(width: metrics.primaryWidth, height: metrics.primaryHeight)
 
             Image(systemName: viewModel.primaryButtonSystemImage)
                 .font(.system(size: metrics.completedIconSize, weight: .medium))
-                .foregroundStyle(.white)
+                .foregroundStyle(.red)
         }
     }
 
     private func recordingOrb(metrics: Metrics) -> some View {
         ZStack {
             Circle()
-                .fill(Color.white.opacity(0.55))
+                .fill(raisedSurface)
                 .frame(width: metrics.recordingOuter, height: metrics.recordingOuter)
 
             Circle()
-                .fill(.black)
+                .fill(Color(uiColor: .systemRed))
                 .frame(width: metrics.recordingInner, height: metrics.recordingInner)
 
             RecordingWaveformView(metrics: metrics)
@@ -202,8 +208,8 @@ struct KeyboardRootView: View {
             if hostHasText {
                 toolbarCircleButton(
                     symbol: "arrow.uturn.backward",
-                    fillColor: Color(red: 0.89, green: 0.89, blue: 0.92),
-                    foregroundColor: .black.opacity(0.7),
+                    fillColor: utilitySurface,
+                    foregroundColor: subtleText,
                     metrics: metrics,
                     action: {
                         if viewModel.canUndoLastInsert {
@@ -223,11 +229,11 @@ struct KeyboardRootView: View {
             Button(action: onInsertNewLine) {
                 Text("换行")
                     .font(.system(size: metrics.secondaryFontSize, weight: .medium))
-                    .foregroundStyle(.black.opacity(0.86))
+                    .foregroundStyle(primaryText)
                     .frame(width: metrics.secondaryWidth, height: metrics.secondaryHeight)
                     .background(
                         Capsule(style: .continuous)
-                            .fill(Color(red: 0.89, green: 0.89, blue: 0.92))
+                            .fill(utilitySurface)
                     )
             }
             .buttonStyle(.plain)
@@ -237,8 +243,8 @@ struct KeyboardRootView: View {
             if hostHasText {
                 toolbarCircleButton(
                     symbol: "mic.fill",
-                    fillColor: .white,
-                    foregroundColor: .black.opacity(0.82),
+                    fillColor: raisedSurface,
+                    foregroundColor: primaryText,
                     metrics: metrics,
                     action: onContextVoiceAction
                 )
@@ -255,7 +261,7 @@ struct KeyboardRootView: View {
                 Button(action: onNextKeyboard) {
                     Image(systemName: "globe")
                         .font(.system(size: metrics.globeSize, weight: .regular))
-                        .foregroundStyle(.black)
+                        .foregroundStyle(primaryText)
                         .frame(width: metrics.globeTapSize, height: metrics.globeTapSize)
                 }
                 .buttonStyle(.plain)
@@ -268,8 +274,8 @@ struct KeyboardRootView: View {
     private func circleActionButton(symbol: String, action: @escaping () -> Void, metrics: Metrics) -> some View {
         toolbarCircleButton(
             symbol: symbol,
-            fillColor: Color(red: 0.91, green: 0.91, blue: 0.93),
-            foregroundColor: .black.opacity(0.72),
+            fillColor: utilitySurface,
+            foregroundColor: subtleText,
             metrics: metrics,
             action: action
         )
@@ -336,14 +342,14 @@ private struct VoiceVibeMark: View {
                 path.addQuadCurve(to: CGPoint(x: 15, y: 24), control: CGPoint(x: 24, y: 22))
                 path.addQuadCurve(to: CGPoint(x: 7, y: 20), control: CGPoint(x: 11, y: 25))
             }
-            .stroke(.black, style: StrokeStyle(lineWidth: 3.2, lineCap: .round, lineJoin: .round))
+            .stroke(Color.primary, style: StrokeStyle(lineWidth: 3.2, lineCap: .round, lineJoin: .round))
 
             Path { path in
                 path.move(to: CGPoint(x: 8, y: 16))
                 path.addQuadCurve(to: CGPoint(x: 13, y: 10), control: CGPoint(x: 9, y: 10))
                 path.addQuadCurve(to: CGPoint(x: 18, y: 14), control: CGPoint(x: 17, y: 10))
             }
-            .stroke(.black, style: StrokeStyle(lineWidth: 2.4, lineCap: .round, lineJoin: .round))
+            .stroke(Color.primary, style: StrokeStyle(lineWidth: 2.4, lineCap: .round, lineJoin: .round))
         }
     }
 }

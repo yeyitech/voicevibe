@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1F3620F724F75477BE0E8AD3"
-               BuildableName = "VoiceVibeMac.app"
+               BuildableName = "VoiceVibe.app"
                BlueprintName = "VoiceVibeMac"
                ReferencedContainer = "container:VoiceVibeMac.xcodeproj">
             </BuildableReference>
@@ -31,7 +31,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1F3620F724F75477BE0E8AD3"
-            BuildableName = "VoiceVibeMac.app"
+            BuildableName = "VoiceVibe.app"
             BlueprintName = "VoiceVibeMac"
             ReferencedContainer = "container:VoiceVibeMac.xcodeproj">
          </BuildableReference>
@@ -54,7 +54,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1F3620F724F75477BE0E8AD3"
-            BuildableName = "VoiceVibeMac.app"
+            BuildableName = "VoiceVibe.app"
             BlueprintName = "VoiceVibeMac"
             ReferencedContainer = "container:VoiceVibeMac.xcodeproj">
          </BuildableReference>
@@ -71,7 +71,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1F3620F724F75477BE0E8AD3"
-            BuildableName = "VoiceVibeMac.app"
+            BuildableName = "VoiceVibe.app"
             BlueprintName = "VoiceVibeMac"
             ReferencedContainer = "container:VoiceVibeMac.xcodeproj">
          </BuildableReference>

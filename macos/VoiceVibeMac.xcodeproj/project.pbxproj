@@ -10,12 +10,14 @@
 		0AE4708F084594838CE7A96F /* PermissionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 542D9F2D88E0E2E07EAA2B7A /* PermissionState.swift */; };
 		0D7DE18827EEEA82E356B79F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B191D88C6C85A6A552AA15B3 /* Assets.xcassets */; };
 		2A21A5095395434851A3B4EE /* CapsuleOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 333C790CF168BC4EC72B9563 /* CapsuleOverlayView.swift */; };
+		37C7712A14DE4C658D434A56 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 374B8DB6403D4DDA8F342AF6 /* main.swift */; };
 		5147B8E6EC066DF345B1EB39 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47A77218476E52EC35C9C4C3 /* Cocoa.framework */; };
+		5CC30D12868EA845A1A44C57 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F0DD80688F7E65E79EB92C0 /* AppDelegate.swift */; };
 		73EA8BE2D35BD86CEF048DCE /* DashScopeRealtimeASRClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD5A80298021616E2042017E /* DashScopeRealtimeASRClient.swift */; };
 		7DBB2260E2FDC76ECE5444AE /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B286A9A98282A0007F85F22 /* MainView.swift */; };
 		808834F84A5C2A802677D650 /* MacAudioCaptureService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09CC9A8C29824FCFCF8BA797 /* MacAudioCaptureService.swift */; };
 		827BB4E40EE5EF063619EB58 /* RecordingState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE5F947243F29F50C0D0457 /* RecordingState.swift */; };
-		A8145415B73BF8D34B81DF1C /* VoiceVibeMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8C69819FEA7DA78282B250A /* VoiceVibeMacApp.swift */; };
+		8D25CBB17C93E4A6D4D6C421 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C42AD6EE4C3A9918BDB49F6C /* StatusBarController.swift */; };
 		B35BD7056C508C74C86C478D /* CapsuleOverlayWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DACF8B0114E95FCABECEF940 /* CapsuleOverlayWindowController.swift */; };
 		C134F791DFB2724D12220923 /* MacAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8191DC5D1CBFE37BC92EB821 /* MacAppModel.swift */; };
 		CB14C3C015498913D7D300F5 /* MenuBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BCEB62AA024BE80754AC1CA /* MenuBarView.swift */; };
@@ -28,12 +30,14 @@
 
 /* Begin PBXFileReference section */
 		093984F118AC822BE9DF589F /* SettingsStore.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsStore.swift; path = Support/SettingsStore.swift; sourceTree = "<group>"; };
+		0F0DD80688F7E65E79EB92C0 /* AppDelegate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = App/AppDelegate.swift; sourceTree = "<group>"; };
 		09CC9A8C29824FCFCF8BA797 /* MacAudioCaptureService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MacAudioCaptureService.swift; path = Services/Audio/MacAudioCaptureService.swift; sourceTree = "<group>"; };
 		133B80F6D761A2EDF25E3B30 /* FnKeyMonitor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FnKeyMonitor.swift; path = Services/Input/FnKeyMonitor.swift; sourceTree = "<group>"; };
-		17733EB69FF590EF959BC202 /* VoiceVibeMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = VoiceVibeMac.app; path = VoiceVibeMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		17733EB69FF590EF959BC202 /* VoiceVibe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = VoiceVibe.app; path = VoiceVibe.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2A5D5CA7D99781498A879CDF /* FocusedTextInjector.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FocusedTextInjector.swift; path = Services/Input/FocusedTextInjector.swift; sourceTree = "<group>"; };
 		2BCEB62AA024BE80754AC1CA /* MenuBarView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MenuBarView.swift; path = Features/Main/MenuBarView.swift; sourceTree = "<group>"; };
 		333C790CF168BC4EC72B9563 /* CapsuleOverlayView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CapsuleOverlayView.swift; path = Features/Overlay/CapsuleOverlayView.swift; sourceTree = "<group>"; };
+		374B8DB6403D4DDA8F342AF6 /* main.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = main.swift; path = App/main.swift; sourceTree = "<group>"; };
 		47A77218476E52EC35C9C4C3 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		542D9F2D88E0E2E07EAA2B7A /* PermissionState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PermissionState.swift; path = Models/PermissionState.swift; sourceTree = "<group>"; };
 		7B286A9A98282A0007F85F22 /* MainView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MainView.swift; path = Features/Main/MainView.swift; sourceTree = "<group>"; };
@@ -42,7 +46,7 @@
 		8F1347B9ADD5076DD1B303D5 /* OverlayState.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OverlayState.swift; path = Models/OverlayState.swift; sourceTree = "<group>"; };
 		B191D88C6C85A6A552AA15B3 /* Assets.xcassets */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		B51AA1FDF49F31234559401E /* DashScopeConfiguration.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DashScopeConfiguration.swift; path = Support/DashScopeConfiguration.swift; sourceTree = "<group>"; };
-		B8C69819FEA7DA78282B250A /* VoiceVibeMacApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = VoiceVibeMacApp.swift; path = App/VoiceVibeMacApp.swift; sourceTree = "<group>"; };
+		C42AD6EE4C3A9918BDB49F6C /* StatusBarController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StatusBarController.swift; path = App/StatusBarController.swift; sourceTree = "<group>"; };
 		DACF8B0114E95FCABECEF940 /* CapsuleOverlayWindowController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CapsuleOverlayWindowController.swift; path = Services/Overlay/CapsuleOverlayWindowController.swift; sourceTree = "<group>"; };
 		FD5A80298021616E2042017E /* DashScopeRealtimeASRClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = DashScopeRealtimeASRClient.swift; path = Services/ASR/DashScopeRealtimeASRClient.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,7 +66,7 @@
 		1BF5AFAB65A73D778F4FC336 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				17733EB69FF590EF959BC202 /* VoiceVibeMac.app */,
+				17733EB69FF590EF959BC202 /* VoiceVibe.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -70,8 +74,10 @@
 		68BB1C5E0A5E3D8346F0B70F /* VoiceVibeMac */ = {
 			isa = PBXGroup;
 			children = (
-				B8C69819FEA7DA78282B250A /* VoiceVibeMacApp.swift */,
+				374B8DB6403D4DDA8F342AF6 /* main.swift */,
+				0F0DD80688F7E65E79EB92C0 /* AppDelegate.swift */,
 				8191DC5D1CBFE37BC92EB821 /* MacAppModel.swift */,
+				C42AD6EE4C3A9918BDB49F6C /* StatusBarController.swift */,
 				7B286A9A98282A0007F85F22 /* MainView.swift */,
 				2BCEB62AA024BE80754AC1CA /* MenuBarView.swift */,
 				333C790CF168BC4EC72B9563 /* CapsuleOverlayView.swift */,
@@ -132,8 +138,8 @@
 			dependencies = (
 			);
 			name = VoiceVibeMac;
-			productName = VoiceVibeMac;
-			productReference = 17733EB69FF590EF959BC202 /* VoiceVibeMac.app */;
+			productName = VoiceVibe;
+			productReference = 17733EB69FF590EF959BC202 /* VoiceVibe.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -181,8 +187,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A8145415B73BF8D34B81DF1C /* VoiceVibeMacApp.swift in Sources */,
+				37C7712A14DE4C658D434A56 /* main.swift in Sources */,
+				5CC30D12868EA845A1A44C57 /* AppDelegate.swift in Sources */,
 				C134F791DFB2724D12220923 /* MacAppModel.swift in Sources */,
+				8D25CBB17C93E4A6D4D6C421 /* StatusBarController.swift in Sources */,
 				7DBB2260E2FDC76ECE5444AE /* MainView.swift in Sources */,
 				CB14C3C015498913D7D300F5 /* MenuBarView.swift in Sources */,
 				2A21A5095395434851A3B4EE /* CapsuleOverlayView.swift in Sources */,
@@ -219,7 +227,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.psyhitech.voicevibe.mac;
-				PRODUCT_NAME = VoiceVibeMac;
+				PRODUCT_NAME = VoiceVibe;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -358,7 +366,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.psyhitech.voicevibe.mac;
-				PRODUCT_NAME = VoiceVibeMac;
+				PRODUCT_NAME = VoiceVibe;
 				SDKROOT = macosx;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

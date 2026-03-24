@@ -6,8 +6,8 @@ PROJECT_PATH="$ROOT_DIR/macos/VoiceVibeMac.xcodeproj"
 SCHEME="VoiceVibeMac"
 DERIVED_DATA_PATH="$ROOT_DIR/build/macos-release"
 DIST_DIR="$ROOT_DIR/dist"
-APP_NAME="VoiceVibe Dev.app"
-ZIP_NAME="VoiceVibe-Dev.zip"
+APP_NAME="VoiceVibe.app"
+ZIP_NAME="VoiceVibe.zip"
 INSTALL_DIR="$HOME/Applications"
 
 mkdir -p "$DIST_DIR" "$INSTALL_DIR"
@@ -32,7 +32,7 @@ xcodebuild \
   CODE_SIGNING_ALLOWED=NO \
   build
 
-BUILT_APP="$DERIVED_DATA_PATH/Build/Products/Release/VoiceVibeMac.app"
+BUILT_APP="$DERIVED_DATA_PATH/Build/Products/Release/VoiceVibe.app"
 
 if [ ! -d "$BUILT_APP" ]; then
   echo "Release app not found: $BUILT_APP" >&2
@@ -47,5 +47,5 @@ echo "Built app:"
 echo "  $DIST_DIR/$APP_NAME"
 echo "Zip package:"
 echo "  $DIST_DIR/$ZIP_NAME"
-echo "Installed dev app:"
+echo "Installed app:"
 echo "  $INSTALL_DIR/$APP_NAME"

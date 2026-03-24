@@ -5,6 +5,7 @@ require 'xcodeproj'
 
 ROOT = File.expand_path('..', __dir__)
 PROJECT_NAME = 'VoiceVibeMac'
+APP_PRODUCT_NAME = 'VoiceVibe'
 PROJECT_PATH = File.join(ROOT, "#{PROJECT_NAME}.xcodeproj")
 
 abort("#{PROJECT_NAME}.xcodeproj already exists. Remove it before regenerating.") if File.exist?(PROJECT_PATH)
@@ -15,13 +16,14 @@ project.build_configuration_list.build_configurations.each do |config|
 end
 
 target = project.new_target(:application, PROJECT_NAME, :osx, '14.0')
-target.product_reference.name = "#{PROJECT_NAME}.app"
+target.product_reference.name = "#{APP_PRODUCT_NAME}.app"
+target.product_reference.path = "#{APP_PRODUCT_NAME}.app"
 
 target.build_configurations.each do |config|
   settings = config.build_settings
   settings['PRODUCT_BUNDLE_IDENTIFIER'] = 'com.psyhitech.voicevibe.mac'
   settings['DEVELOPMENT_TEAM'] = 'DQ362F38WB'
-  settings['PRODUCT_NAME'] = PROJECT_NAME
+  settings['PRODUCT_NAME'] = APP_PRODUCT_NAME
   settings['MARKETING_VERSION'] = '0.1.0'
   settings['CURRENT_PROJECT_VERSION'] = '1'
   settings['SWIFT_VERSION'] = '5.0'
@@ -45,8 +47,10 @@ main_group.set_source_tree('<group>')
 main_group.set_path(PROJECT_NAME)
 
 source_files = %w[
-  App/VoiceVibeMacApp.swift
+  App/main.swift
+  App/AppDelegate.swift
   App/MacAppModel.swift
+  App/StatusBarController.swift
   Features/Main/MainView.swift
   Features/Main/MenuBarView.swift
   Features/Overlay/CapsuleOverlayView.swift

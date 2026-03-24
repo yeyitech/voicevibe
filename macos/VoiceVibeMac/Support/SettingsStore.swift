@@ -58,20 +58,59 @@ final class SettingsStore: ObservableObject {
         didSet { defaults.set(languageHintsText, forKey: Keys.languageHintsText) }
     }
 
+    @Published var websocketURLOverride: String {
+        didSet { defaults.set(websocketURLOverride, forKey: Keys.websocketURLOverride) }
+    }
+
     @Published var triggerMode: TriggerMode {
         didSet { defaults.set(triggerMode.rawValue, forKey: Keys.triggerMode) }
     }
 
+    var configurationValidationError: String? {
+        if apiKey.nilIfBlank == nil {
+            return "请先配置 DashScope API Key。"
+        }
+
+        if websocketURLOverride.nilIfBlank != nil, validatedCustomWebSocketURL == nil {
+            return "连接地址无效。请粘贴完整的 ws:// 或 wss:// 地址。"
+        }
+
+        return nil
+    }
+
     var activeConfiguration: DashScopeConfiguration? {
         guard let apiKey = apiKey.nilIfBlank else { return nil }
+        let customWebSocketURLText = websocketURLOverride.nilIfBlank
+        let customWebSocketURL = validatedCustomWebSocketURL
+
+        if customWebSocketURLText != nil, customWebSocketURL == nil {
+            return nil
+        }
 
         return DashScopeConfiguration(
             apiKey: apiKey,
             region: region,
             model: model.nilIfBlank ?? "fun-asr-realtime",
             vocabularyID: vocabularyID.nilIfBlank,
-            languageHints: languageHints
+            languageHints: languageHints,
+            customWebSocketURL: customWebSocketURL
         )
+    }
+
+    var defaultWebSocketURLString: String {
+        region.websocketURL.absoluteString
+    }
+
+    var effectiveWebSocketURLString: String {
+        validatedCustomWebSocketURL?.absoluteString ?? defaultWebSocketURLString
+    }
+
+    var isUsingCustomWebSocketURL: Bool {
+        validatedCustomWebSocketURL != nil
+    }
+
+    var hasValidCustomWebSocketURL: Bool {
+        websocketURLOverride.nilIfBlank == nil || validatedCustomWebSocketURL != nil
     }
 
     var languageHints: [String] {
@@ -97,13 +136,23 @@ final class SettingsStore: ObservableObject {
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
         let environment = ProcessInfo.processInfo.environment
+        let storedAPIKey = defaults.string(forKey: Keys.apiKey)
+        let storedRegion = defaults.string(forKey: Keys.region)
+        let storedModel = defaults.string(forKey: Keys.model)
+        let storedVocabularyID = defaults.string(forKey: Keys.vocabularyID)
+        let storedLanguageHints = defaults.string(forKey: Keys.languageHintsText)
+        let storedWebSocketURLOverride = defaults.string(forKey: Keys.websocketURLOverride)
+        let storedTriggerMode = defaults.string(forKey: Keys.triggerMode)
 
-        self.apiKey = environment["DASHSCOPE_API_KEY"] ?? defaults.string(forKey: Keys.apiKey) ?? ""
-        self.region = DashScopeRegion(rawValue: environment["DASHSCOPE_REGION"] ?? defaults.string(forKey: Keys.region) ?? "") ?? .beijing
-        self.model = environment["DASHSCOPE_MODEL"] ?? defaults.string(forKey: Keys.model) ?? "fun-asr-realtime"
-        self.vocabularyID = environment["DASHSCOPE_VOCABULARY_ID"] ?? defaults.string(forKey: Keys.vocabularyID) ?? ""
-        self.languageHintsText = environment["DASHSCOPE_LANGUAGE_HINTS"] ?? defaults.string(forKey: Keys.languageHintsText) ?? "zh"
-        self.triggerMode = TriggerMode(rawValue: environment["VOICEVIBE_TRIGGER_MODE"] ?? defaults.string(forKey: Keys.triggerMode) ?? "") ?? .fnHold
+        // Prefer app-local settings over inherited shell env so terminal launch
+        // doesn't silently override what the user configured in the desktop UI.
+        self.apiKey = storedAPIKey ?? environment["DASHSCOPE_API_KEY"] ?? ""
+        self.region = DashScopeRegion(rawValue: storedRegion ?? environment["DASHSCOPE_REGION"] ?? "") ?? .beijing
+        self.model = storedModel ?? environment["DASHSCOPE_MODEL"] ?? "fun-asr-realtime"
+        self.vocabularyID = storedVocabularyID ?? environment["DASHSCOPE_VOCABULARY_ID"] ?? ""
+        self.languageHintsText = storedLanguageHints ?? environment["DASHSCOPE_LANGUAGE_HINTS"] ?? "zh"
+        self.websocketURLOverride = storedWebSocketURLOverride ?? environment["DASHSCOPE_WEBSOCKET_URL"] ?? ""
+        self.triggerMode = TriggerMode(rawValue: storedTriggerMode ?? environment["VOICEVIBE_TRIGGER_MODE"] ?? "") ?? .fnHold
     }
 
     private static func sanitizedAPIKeyInput(_ value: String, fallback: String) -> String {
@@ -113,6 +162,14 @@ final class SettingsStore: ObservableObject {
         }
         return value.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+
+    private var validatedCustomWebSocketURL: URL? {
+        guard let rawValue = websocketURLOverride.nilIfBlank else { return nil }
+        guard let url = URL(string: rawValue) else { return nil }
+        guard let scheme = url.scheme?.lowercased(), scheme == "ws" || scheme == "wss" else { return nil }
+        guard url.host?.isEmpty == false else { return nil }
+        return url
+    }
 }
 
 private enum Keys {
@@ -121,5 +178,6 @@ private enum Keys {
     static let model = "dashscope.model"
     static let vocabularyID = "dashscope.vocabularyID"
     static let languageHintsText = "dashscope.languageHints"
+    static let websocketURLOverride = "dashscope.websocketURLOverride"
     static let triggerMode = "voicevibe.triggerMode"
 }

@@ -1,8 +1,10 @@
+import AppKit
 import SwiftUI
 
 struct MainView: View {
     @ObservedObject var appModel: MacAppModel
     @ObservedObject var settingsStore: SettingsStore
+    @State private var revealsAPIKey = false
 
     private let ink = Color(red: 0.16, green: 0.13, blue: 0.11)
     private let mutedInk = Color(red: 0.40, green: 0.34, blue: 0.29)
@@ -49,30 +51,31 @@ struct MainView: View {
     }
 
     private var heroCard: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: 10) {
             Text("VoiceVibe")
-                .font(.system(size: 36, weight: .bold, design: .serif))
+                .font(.system(size: 30, weight: .bold, design: .serif))
                 .foregroundStyle(ink)
 
-            Text("主页面只保留三类信息：权限是否齐全、最近一次录音转写表现、以及最近结果落到哪里。连接参数仍然可改，但不再让界面看起来像调试控制台。")
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+            Text("按触发键开始录音，松开后自动转写。识别结果会优先插入当前输入位置，无法插入时会回退到剪贴板。")
+                .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(mutedInk)
+                .lineSpacing(1)
                 .fixedSize(horizontal: false, vertical: true)
 
             HStack(alignment: .center, spacing: 12) {
                 Label(appModel.recordingState.title, systemImage: appModel.menuBarSymbolName)
-                    .font(.system(size: 13, weight: .semibold, design: .rounded))
+                    .font(.system(size: 12, weight: .semibold, design: .rounded))
                     .foregroundStyle(ink)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
                     .background(accentSoft, in: Capsule())
 
                 Text(appModel.recordingState.detail)
-                    .font(.system(size: 13, weight: .medium, design: .rounded))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
                     .foregroundStyle(mutedInk)
             }
         }
-        .cardStyle()
+        .compactCardStyle()
     }
 
     private var permissionCard: some View {
@@ -85,38 +88,31 @@ struct MainView: View {
 
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 12) {
-                    permissionTile(title: "麦克风", state: appModel.microphonePermission)
-                    permissionTile(title: "辅助功能", state: appModel.accessibilityPermission)
-                    permissionTile(title: "输入监控", state: appModel.inputMonitoringPermission)
-                    permissionTile(title: "Post Events", state: appModel.postEventsPermission)
+                    permissionTile(kind: .microphone)
+                    permissionTile(kind: .accessibility)
+                    permissionTile(kind: .inputMonitoring)
+                    permissionTile(kind: .postEvents)
                 }
 
                 VStack(spacing: 10) {
-                    permissionTile(title: "麦克风", state: appModel.microphonePermission)
-                    permissionTile(title: "辅助功能", state: appModel.accessibilityPermission)
-                    permissionTile(title: "输入监控", state: appModel.inputMonitoringPermission)
-                    permissionTile(title: "Post Events", state: appModel.postEventsPermission)
+                    permissionTile(kind: .microphone)
+                    permissionTile(kind: .accessibility)
+                    permissionTile(kind: .inputMonitoring)
+                    permissionTile(kind: .postEvents)
                 }
             }
 
             HStack(spacing: 12) {
-                Button("请求权限") {
-                    Task {
-                        await appModel.promptForPermissions()
-                    }
-                }
-                .buttonStyle(PrimarySurfaceButtonStyle())
-
-                Button("打开系统设置") {
-                    appModel.openSystemSettings()
-                }
-                .buttonStyle(SecondarySurfaceButtonStyle())
-
                 Button("刷新状态") {
                     appModel.refreshPermissions()
                 }
                 .buttonStyle(SecondarySurfaceButtonStyle())
             }
+
+            Text(appModel.permissionHelpText)
+                .font(.system(size: 12, weight: .medium, design: .rounded))
+                .foregroundStyle(quietInk)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .cardStyle()
     }
@@ -186,22 +182,24 @@ struct MainView: View {
             sectionHeading(
                 eyebrow: "Connection",
                 title: "连接配置",
-                detail: "API Key 仍然可配置，现在只是默认已有一份配置。"
+                detail: "支持直接粘贴 API Key，也可以按需覆盖 WebSocket 接入地址。留空时会按区域自动选择默认地址。"
             )
 
-            SecureField("API Key", text: $settingsStore.apiKey)
-                .font(.system(size: 14, weight: .medium, design: .rounded))
-                .foregroundStyle(ink)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color.white)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .strokeBorder(border, lineWidth: 1)
-                        )
+            VStack(alignment: .leading, spacing: 8) {
+                fieldLabel("API Key")
+                secureConfigField(
+                    placeholder: "粘贴 DashScope API Key",
+                    text: $settingsStore.apiKey,
+                    revealsText: $revealsAPIKey,
+                    pasteAction: {
+                        pasteFromClipboard { settingsStore.apiKey = $0 }
+                    },
+                    trailingActionTitle: "清空",
+                    trailingAction: {
+                        settingsStore.apiKey = ""
+                    }
                 )
+            }
 
             VStack(alignment: .leading, spacing: 8) {
                 fieldLabel("区域")
@@ -213,6 +211,26 @@ struct MainView: View {
             }
 
             VStack(alignment: .leading, spacing: 8) {
+                fieldLabel("接入地址（可选）")
+                editableConfigField(
+                    placeholder: "wss://...",
+                    text: $settingsStore.websocketURLOverride,
+                    pasteAction: {
+                        pasteFromClipboard { settingsStore.websocketURLOverride = $0 }
+                    },
+                    trailingActionTitle: "恢复默认",
+                    trailingAction: {
+                        settingsStore.websocketURLOverride = ""
+                    }
+                )
+
+                Text(settingsStore.hasValidCustomWebSocketURL ? "留空时默认使用：\(settingsStore.defaultWebSocketURLString)" : "当前地址无效。请输入完整的 ws:// 或 wss:// 地址。")
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .foregroundStyle(settingsStore.hasValidCustomWebSocketURL ? quietInk : .red)
+                    .textSelection(.enabled)
+            }
+
+            VStack(alignment: .leading, spacing: 8) {
                 fieldLabel("触发键")
                 segmentedControl(
                     options: TriggerMode.allCases,
@@ -221,9 +239,13 @@ struct MainView: View {
                 )
             }
 
-            Text("当前 API Key：\(settingsStore.apiKeyMasked)")
-                .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundStyle(mutedInk)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("当前 API Key：\(settingsStore.apiKeyMasked)")
+                Text("当前接入地址：\(settingsStore.effectiveWebSocketURLString)")
+                    .textSelection(.enabled)
+            }
+            .font(.system(size: 12, weight: .medium, design: .rounded))
+            .foregroundStyle(mutedInk)
         }
         .cardStyle()
     }
@@ -252,19 +274,141 @@ struct MainView: View {
             .foregroundStyle(mutedInk)
     }
 
-    private func permissionTile(title: String, state: PermissionState) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
+    private func editableConfigField(
+        placeholder: String,
+        text: Binding<String>,
+        pasteAction: @escaping () -> Void,
+        trailingActionTitle: String,
+        trailingAction: @escaping () -> Void
+    ) -> some View {
+        HStack(spacing: 10) {
+            TextField(placeholder, text: text)
+                .textFieldStyle(.plain)
+                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .foregroundStyle(ink)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(Color.white)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .strokeBorder(border, lineWidth: 1)
+                        )
+                )
+
+            Button("粘贴", action: pasteAction)
+                .buttonStyle(SecondarySurfaceButtonStyle())
+
+            Button(trailingActionTitle, action: trailingAction)
+                .buttonStyle(SecondarySurfaceButtonStyle())
+        }
+    }
+
+    private func secureConfigField(
+        placeholder: String,
+        text: Binding<String>,
+        revealsText: Binding<Bool>,
+        pasteAction: @escaping () -> Void,
+        trailingActionTitle: String,
+        trailingAction: @escaping () -> Void
+    ) -> some View {
+        HStack(spacing: 10) {
+            Group {
+                if revealsText.wrappedValue {
+                    TextField(placeholder, text: text)
+                } else {
+                    SecureField(placeholder, text: text)
+                }
+            }
+            .textFieldStyle(.plain)
+            .font(.system(size: 14, weight: .medium, design: .rounded))
+            .foregroundStyle(ink)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.white)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .strokeBorder(border, lineWidth: 1)
+                    )
+            )
+
+            Button(revealsText.wrappedValue ? "隐藏" : "显示") {
+                revealsText.wrappedValue.toggle()
+            }
+            .buttonStyle(SecondarySurfaceButtonStyle())
+
+            Button("粘贴", action: pasteAction)
+                .buttonStyle(SecondarySurfaceButtonStyle())
+
+            Button(trailingActionTitle, action: trailingAction)
+                .buttonStyle(SecondarySurfaceButtonStyle())
+        }
+    }
+
+    private func pasteFromClipboard(assign: (String) -> Void) {
+        guard let value = NSPasteboard.general.string(forType: .string)?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+            !value.isEmpty
+        else {
+            return
+        }
+
+        assign(value)
+    }
+
+    private func permissionTile(kind: MacAppModel.PermissionKind) -> some View {
+        let state = appModel.permissionState(for: kind)
+        return VStack(alignment: .leading, spacing: 6) {
+            Text(kind.title)
                 .font(.system(size: 12, weight: .semibold, design: .rounded))
                 .foregroundStyle(mutedInk)
 
             Label(state.title, systemImage: state.systemImageName)
                 .font(.system(size: 13, weight: .semibold, design: .rounded))
                 .foregroundStyle(ink)
+
+            Text(permissionFootnote(for: kind, state: state))
+                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .foregroundStyle(quietInk)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, minHeight: 30, alignment: .topLeading)
+
+            Spacer(minLength: 0)
+
+            Group {
+                if state.isGranted {
+                    Button(appModel.permissionActionTitle(for: kind)) {
+                        appModel.requestPermission(for: kind)
+                    }
+                    .buttonStyle(SecondarySurfaceButtonStyle())
+                } else {
+                    Button(appModel.permissionActionTitle(for: kind)) {
+                        appModel.requestPermission(for: kind)
+                    }
+                    .buttonStyle(PrimarySurfaceButtonStyle())
+                }
+            }
+            .disabled(state.isGranted)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, minHeight: 136, alignment: .topLeading)
         .padding(14)
         .background(panelSoft, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+    }
+
+    private func permissionFootnote(for kind: MacAppModel.PermissionKind, state: PermissionState) -> String {
+        switch kind {
+        case .microphone:
+            return state.isGranted ? "允许录音采集。" : "未允许时无法开始录音。"
+        case .accessibility:
+            return state.isGranted ? "允许直接写入当前输入框。" : "未允许时只能转写，不能自动插入。"
+        case .inputMonitoring:
+            return state.isGranted ? "允许在其他 App 中全局监听触发键。" : "打开后通常需要完全退出再重新打开。"
+        case .postEvents:
+            return state.isGranted ? "允许用系统事件执行粘贴回填。" : "打开后通常需要完全退出再重新打开。"
+        }
     }
 
     private func statTile(title: String, value: String) -> some View {
@@ -352,7 +496,23 @@ private struct SecondarySurfaceButtonStyle: ButtonStyle {
 
 private extension View {
     func cardStyle() -> some View {
-        padding(22)
+        frame(maxWidth: .infinity, alignment: .leading)
+            .padding(20)
+            .background(
+                RoundedRectangle(cornerRadius: 26, style: .continuous)
+                    .fill(Color(red: 0.97, green: 0.95, blue: 0.91))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 26, style: .continuous)
+                            .strokeBorder(Color(red: 0.82, green: 0.73, blue: 0.60), lineWidth: 1)
+                    )
+                    .shadow(color: Color.black.opacity(0.08), radius: 14, y: 8)
+            )
+    }
+
+    func compactCardStyle() -> some View {
+        frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 26, style: .continuous)
                     .fill(Color(red: 0.97, green: 0.95, blue: 0.91))

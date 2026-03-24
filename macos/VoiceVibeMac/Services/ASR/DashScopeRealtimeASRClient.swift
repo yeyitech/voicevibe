@@ -14,6 +14,7 @@ actor DashScopeRealtimeASRClient {
         case invalidCommand
         case taskStartTimedOut
         case taskFinishTimedOut
+        case httpError(statusCode: Int, message: String)
         case serverError(code: String?, message: String)
 
         var errorDescription: String? {
@@ -26,6 +27,8 @@ actor DashScopeRealtimeASRClient {
                 return "等待 task-started 超时。"
             case .taskFinishTimedOut:
                 return "等待 task-finished 超时。"
+            case .httpError(_, let message):
+                return message
             case .serverError(let code, let message):
                 if let code {
                     return "阿里云返回错误 \(code): \(message)"
@@ -162,6 +165,8 @@ actor DashScopeRealtimeASRClient {
     private var taskFinishedContinuation: CheckedContinuation<Void, Error>?
     private var taskStartTimeoutTask: Task<Void, Never>?
     private var taskFinishTimeoutTask: Task<Void, Never>?
+    private var pendingTaskStartResult: Result<Void, Error>?
+    private var pendingTaskFinishResult: Result<Void, Error>?
     private var hasReceivedTerminalEvent = false
     private var isDisconnecting = false
 
@@ -180,6 +185,8 @@ actor DashScopeRealtimeASRClient {
         currentTaskID = taskID
         hasReceivedTerminalEvent = false
         isDisconnecting = false
+        pendingTaskStartResult = nil
+        pendingTaskFinishResult = nil
 
         try await send(command: makeRunTaskCommand(taskID: taskID))
         try await waitForTaskStart()
@@ -217,6 +224,8 @@ actor DashScopeRealtimeASRClient {
 
         taskStartedContinuation = nil
         taskFinishedContinuation = nil
+        pendingTaskStartResult = nil
+        pendingTaskFinishResult = nil
         receiveLoopTask = nil
         webSocketTask = nil
         session = nil
@@ -255,6 +264,11 @@ actor DashScopeRealtimeASRClient {
     }
 
     private func waitForTaskStart() async throws {
+        if let pendingTaskStartResult {
+            self.pendingTaskStartResult = nil
+            return try pendingTaskStartResult.get()
+        }
+
         try await withCheckedThrowingContinuation { continuation in
             taskStartedContinuation = continuation
             taskStartTimeoutTask?.cancel()
@@ -266,6 +280,11 @@ actor DashScopeRealtimeASRClient {
     }
 
     private func waitForTaskFinish() async throws {
+        if let pendingTaskFinishResult {
+            self.pendingTaskFinishResult = nil
+            return try pendingTaskFinishResult.get()
+        }
+
         try await withCheckedThrowingContinuation { continuation in
             taskFinishedContinuation = continuation
             taskFinishTimeoutTask?.cancel()
@@ -280,7 +299,10 @@ actor DashScopeRealtimeASRClient {
         taskStartTimeoutTask?.cancel()
         taskStartTimeoutTask = nil
 
-        guard let taskStartedContinuation else { return }
+        guard let taskStartedContinuation else {
+            pendingTaskStartResult = error.map { .failure($0) } ?? .success(())
+            return
+        }
         self.taskStartedContinuation = nil
 
         if let error {
@@ -294,7 +316,10 @@ actor DashScopeRealtimeASRClient {
         taskFinishTimeoutTask?.cancel()
         taskFinishTimeoutTask = nil
 
-        guard let taskFinishedContinuation else { return }
+        guard let taskFinishedContinuation else {
+            pendingTaskFinishResult = error.map { .failure($0) } ?? .success(())
+            return
+        }
         self.taskFinishedContinuation = nil
 
         if let error {
@@ -317,7 +342,7 @@ actor DashScopeRealtimeASRClient {
             if isDisconnecting || hasReceivedTerminalEvent {
                 return
             }
-            let clientError = error as? ClientError ?? ClientError.serverError(code: nil, message: error.localizedDescription)
+            let clientError = mappedClientError(from: error)
             eventHandler(.taskFailed(code: nil, message: clientError.localizedDescription))
             resumeTaskStartContinuationIfNeeded(with: clientError)
             resumeTaskFinishContinuationIfNeeded(with: clientError)
@@ -399,5 +424,33 @@ actor DashScopeRealtimeASRClient {
                 input: .init()
             )
         )
+    }
+
+    private func mappedClientError(from error: Error) -> ClientError {
+        if let clientError = error as? ClientError {
+            return clientError
+        }
+
+        if let response = webSocketTask?.response as? HTTPURLResponse {
+            return .httpError(
+                statusCode: response.statusCode,
+                message: httpErrorMessage(for: response.statusCode)
+            )
+        }
+
+        return .serverError(code: nil, message: error.localizedDescription)
+    }
+
+    private func httpErrorMessage(for statusCode: Int) -> String {
+        switch statusCode {
+        case 401:
+            return "ASR 服务鉴权失败（HTTP 401）。请检查 API Key 是否有效，以及接入区域或连接地址是否匹配。"
+        case 403:
+            return "ASR 服务拒绝访问（HTTP 403）。请检查账号权限、API Key 和当前接入区域。"
+        case 404:
+            return "ASR 连接地址不存在（HTTP 404）。请检查当前连接地址是否填写正确。"
+        default:
+            return "ASR 服务连接失败（HTTP \(statusCode)）。请检查 API Key、接入区域和连接地址。"
+        }
     }
 }

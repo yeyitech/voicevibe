@@ -39,14 +39,14 @@ xcodebuild -project VoiceVibeMac.xcodeproj -scheme VoiceVibeMac -configuration R
 脚本构建后会生成：
 
 ```bash
-dist/VoiceVibe Dev.app
-dist/VoiceVibe-Dev.zip
+dist/VoiceVibe.app
+dist/VoiceVibe.zip
 ```
 
 同时会同步一份固定开发版到：
 
 ```bash
-~/Applications/VoiceVibe Dev.app
+~/Applications/VoiceVibe.app
 ```
 
 ## 首次安装 / 使用
@@ -54,7 +54,7 @@ dist/VoiceVibe-Dev.zip
 1. 打开：
 
 ```bash
-open "$HOME/Applications/VoiceVibe Dev.app"
+open "$HOME/Applications/VoiceVibe.app"
 ```
 
 2. 授权：

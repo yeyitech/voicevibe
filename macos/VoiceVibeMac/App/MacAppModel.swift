@@ -6,6 +6,28 @@ import SwiftUI
 
 @MainActor
 final class MacAppModel: ObservableObject {
+    enum PermissionKind: String, CaseIterable, Identifiable {
+        case microphone
+        case accessibility
+        case inputMonitoring
+        case postEvents
+
+        var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .microphone:
+                return "麦克风"
+            case .accessibility:
+                return "辅助功能"
+            case .inputMonitoring:
+                return "输入监控"
+            case .postEvents:
+                return "Post Events"
+            }
+        }
+    }
+
     struct EventLogEntry: Identifiable, Equatable {
         let id = UUID()
         let timestamp: Date
@@ -60,6 +82,7 @@ final class MacAppModel: ObservableObject {
     private var isShortcutCurrentlyHeld = false
     private var isStartingRecording = false
     private var pendingStopAfterStart = false
+    private var hasRequestedMicrophonePermissionThisLaunch = false
 
     init(settingsStore: SettingsStore) {
         self.settingsStore = settingsStore
@@ -109,6 +132,52 @@ final class MacAppModel: ObservableObject {
 
     var postEventsPermissionTitle: String {
         postEventsPermission.title
+    }
+
+    var permissionHelpText: String {
+        let missingPermissions = [
+            microphonePermission.isGranted ? nil : "麦克风",
+            accessibilityPermission.isGranted ? nil : "辅助功能",
+            inputMonitoringPermission.isGranted ? nil : "输入监控",
+            postEventsPermission.isGranted ? nil : "Post Events"
+        ].compactMap { $0 }
+
+        guard missingPermissions.isEmpty == false else {
+            return "当前检测的是正在运行的这份 App。若你刚在系统设置里完成授权，点“刷新状态”；输入监控和 Post Events 通常还需要完全退出后重新打开。"
+        }
+
+        return "缺少权限：\(missingPermissions.joined(separator: "、"))。注意要给当前运行的这份 App 授权；输入监控和 Post Events 在系统里勾选后，通常需要完全退出再重新打开。"
+    }
+
+    func permissionState(for kind: PermissionKind) -> PermissionState {
+        switch kind {
+        case .microphone:
+            return microphonePermission
+        case .accessibility:
+            return accessibilityPermission
+        case .inputMonitoring:
+            return inputMonitoringPermission
+        case .postEvents:
+            return postEventsPermission
+        }
+    }
+
+    func permissionActionTitle(for kind: PermissionKind) -> String {
+        let state = permissionState(for: kind)
+        if state.isGranted {
+            return "已授权"
+        }
+
+        switch kind {
+        case .microphone:
+            return state == .undetermined ? "请求权限" : "打开设置"
+        case .accessibility:
+            return "前往辅助功能"
+        case .inputMonitoring:
+            return "前往输入监控"
+        case .postEvents:
+            return "前往 Post Events"
+        }
     }
 
     var triggerModeTitle: String {
@@ -178,8 +247,9 @@ final class MacAppModel: ObservableObject {
 
     func promptForPermissions() async {
         if microphonePermission != .granted {
+            hasRequestedMicrophonePermissionThisLaunch = true
             let granted = await audioCaptureService.requestPermission()
-            microphonePermission = granted ? .granted : .denied
+            microphonePermission = granted ? .granted : audioCaptureService.permissionState()
         }
 
         if accessibilityPermission != .granted {
@@ -236,7 +306,12 @@ final class MacAppModel: ObservableObject {
                 appendLog("手动插入成功: \(strategy.displayName)")
                 currentInputTarget = nil
             } catch {
-                presentError(error.localizedDescription)
+                copyTextToPasteboard(finalText, reason: "手动插入失败，已把最新结果复制到剪贴板")
+                lastInjectionStrategyDescription = "已复制到剪贴板"
+                recordingState = .readyToInsert(finalText)
+                overlayController.show(.readyToInsert(finalText), hidesAfter: 1.8)
+                appendLog("手动插入失败，回退到剪贴板: \(error.localizedDescription)")
+                currentInputTarget = nil
             }
         }
     }
@@ -257,7 +332,63 @@ final class MacAppModel: ObservableObject {
     }
 
     func openSystemSettings() {
-        openSystemSettingsPane()
+        if microphonePermission != .granted {
+            openSystemSettingsPane(for: .microphone)
+            return
+        }
+        if accessibilityPermission != .granted {
+            openSystemSettingsPane(for: .accessibility)
+            return
+        }
+        if inputMonitoringPermission != .granted {
+            openSystemSettingsPane(for: .listenEvent)
+            return
+        }
+        if postEventsPermission != .granted {
+            openSystemSettingsPane(for: .postEvent)
+            return
+        }
+
+        openSystemSettingsPane(for: nil)
+    }
+
+    func requestPermission(for kind: PermissionKind) {
+        Task {
+            await requestPermissionAndOpenSettingsIfNeeded(for: kind)
+        }
+    }
+
+    private func requestPermissionAndOpenSettingsIfNeeded(for kind: PermissionKind) async {
+        switch kind {
+        case .microphone:
+            hasRequestedMicrophonePermissionThisLaunch = true
+            let granted = await audioCaptureService.requestPermission()
+            microphonePermission = granted ? .granted : audioCaptureService.permissionState()
+            appendLog("已尝试请求麦克风权限")
+            if granted == false {
+                openSystemSettingsPane(for: .microphone)
+            }
+        case .accessibility:
+            let options = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String: true] as CFDictionary
+            _ = AXIsProcessTrustedWithOptions(options)
+            appendLog("已尝试请求辅助功能权限")
+            openSystemSettingsPane(for: .accessibility)
+        case .inputMonitoring:
+            if !CGPreflightListenEventAccess() {
+                _ = CGRequestListenEventAccess()
+            }
+            appendLog("已尝试请求输入监控权限")
+            openSystemSettingsPane(for: .listenEvent)
+        case .postEvents:
+            if !CGPreflightPostEventAccess() {
+                _ = CGRequestPostEventAccess()
+            }
+            appendLog("已尝试请求 Post Events 权限")
+            openSystemSettingsPane(for: .postEvent)
+        }
+
+        try? await Task.sleep(for: .milliseconds(600))
+        refreshPermissions()
     }
 
     private func startShortcutMonitoringIfPossible() {
@@ -278,7 +409,7 @@ final class MacAppModel: ObservableObject {
         guard !isStartingRecording else { return }
 
         guard let configuration = settingsStore.activeConfiguration else {
-            presentError("请先配置 DashScope API Key。")
+            presentError(settingsStore.configurationValidationError ?? "请先配置 DashScope API Key。")
             return
         }
         currentConfiguration = configuration
@@ -290,11 +421,20 @@ final class MacAppModel: ObservableObject {
         }
 
         if microphonePermission != .granted {
-            let granted = await audioCaptureService.requestPermission()
-            microphonePermission = granted ? .granted : .denied
+            if microphonePermission == .undetermined && !hasRequestedMicrophonePermissionThisLaunch {
+                hasRequestedMicrophonePermissionThisLaunch = true
+                let granted = await audioCaptureService.requestPermission()
+                microphonePermission = granted ? .granted : audioCaptureService.permissionState()
+            } else {
+                microphonePermission = audioCaptureService.permissionState()
+            }
         }
         guard microphonePermission.isGranted else {
-            presentError("麦克风权限未授予，无法开始录音。")
+            if microphonePermission == .undetermined {
+                presentError("麦克风权限尚未完成。请在主窗口点击“请求权限”，或到系统设置里手动允许后再试。")
+            } else {
+                presentError("麦克风权限未授予，无法开始录音。请到系统设置里手动允许后再试。")
+            }
             return
         }
 
@@ -464,18 +604,31 @@ final class MacAppModel: ObservableObject {
         self.currentInputTarget = nil
     }
 
-    private func openSystemSettingsPane() {
+    private enum PrivacyPane: String {
+        case microphone = "Privacy_Microphone"
+        case accessibility = "Privacy_Accessibility"
+        case listenEvent = "Privacy_ListenEvent"
+        case postEvent = "Privacy_PostEvent"
+    }
+
+    private func openSystemSettingsPane(for pane: PrivacyPane?) {
         let workspace = NSWorkspace.shared
-        let candidates = [
-            "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone",
-            "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",
-            "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent",
-            "x-apple.systempreferences:com.apple.preference.security?Privacy_PostEvent"
-        ]
+        let candidates: [String]
+
+        if let pane {
+            candidates = ["x-apple.systempreferences:com.apple.preference.security?\(pane.rawValue)"]
+        } else {
+            candidates = [
+                "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone",
+                "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility",
+                "x-apple.systempreferences:com.apple.preference.security?Privacy_ListenEvent",
+                "x-apple.systempreferences:com.apple.preference.security?Privacy_PostEvent"
+            ]
+        }
 
         for candidate in candidates {
             if let url = URL(string: candidate), workspace.open(url) {
-                appendLog("已尝试打开系统设置")
+                appendLog("已尝试打开系统设置: \(candidate)")
                 return
             }
         }

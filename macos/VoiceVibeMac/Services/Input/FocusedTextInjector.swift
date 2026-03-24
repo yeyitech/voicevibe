@@ -72,6 +72,15 @@ enum TextInjectionError: LocalizedError {
 
 final class FocusedTextInjector {
     private let appBundleIdentifier = "com.psyhitech.voicevibe.mac"
+    private let terminalBundleIdentifiers: Set<String> = [
+        "com.googlecode.iterm2",
+        "com.apple.Terminal",
+        "com.mitchellh.ghostty",
+        "dev.warp.Warp-Stable",
+        "org.alacritty",
+        "com.github.wez.wezterm",
+        "net.kovidgoyal.kitty"
+    ]
 
     func captureFocusedInputTarget() throws -> FocusedInputTarget {
         guard AXIsProcessTrusted() else {
@@ -116,6 +125,20 @@ final class FocusedTextInjector {
     func insert(text: String, into target: FocusedInputTarget) throws -> TextInjectionStrategy {
         let normalizedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !normalizedText.isEmpty else { return .accessibilityValue }
+
+        if shouldPreferTerminalTyping(for: target, text: normalizedText) {
+            do {
+                try insertViaSyntheticTyping(text: normalizedText, into: target)
+                return .syntheticTyping
+            } catch {
+            }
+
+            do {
+                try insertViaPasteboardPaste(text: normalizedText, into: target)
+                return .pasteboardPaste
+            } catch {
+            }
+        }
 
         do {
             try insertViaAccessibility(text: normalizedText, into: target)
@@ -204,12 +227,15 @@ final class FocusedTextInjector {
         try ensureEventPostingAccess()
 
         let pasteboard = NSPasteboard.general
-        let snapshot = capturePasteboardSnapshot(from: pasteboard)
+        let shouldRestoreClipboard = !shouldLeaveInsertedTextOnPasteboard(for: target)
+        let snapshot = shouldRestoreClipboard ? capturePasteboardSnapshot(from: pasteboard) : []
         pasteboard.clearContents()
         pasteboard.setString(text, forType: .string)
 
         defer {
-            restorePasteboardSnapshot(snapshot, to: pasteboard)
+            if shouldRestoreClipboard {
+                restorePasteboardSnapshot(snapshot, to: pasteboard)
+            }
         }
 
         activate(target)
@@ -227,7 +253,7 @@ final class FocusedTextInjector {
         keyDown.post(tap: .cghidEventTap)
         keyUp.post(tap: .cghidEventTap)
 
-        Thread.sleep(forTimeInterval: 0.12)
+        Thread.sleep(forTimeInterval: shouldRestoreClipboard ? 0.18 : 0.28)
     }
 
     private func currentStringValue(of element: AXUIElement) throws -> String {
@@ -292,8 +318,8 @@ final class FocusedTextInjector {
     }
 
     private func activate(_ target: FocusedInputTarget) {
-        target.runningApplication?.activate()
-        Thread.sleep(forTimeInterval: 0.08)
+        target.runningApplication?.activate(options: [.activateIgnoringOtherApps])
+        Thread.sleep(forTimeInterval: isTerminalLikeTarget(target) ? 0.14 : 0.08)
     }
 
     private func makeEventSource() throws -> CGEventSource {
@@ -334,5 +360,22 @@ final class FocusedTextInjector {
         let location = min(max(range.location, 0), maxLength)
         let upperBound = min(location + max(range.length, 0), maxLength)
         return CFRange(location: location, length: upperBound - location)
+    }
+
+    private func shouldLeaveInsertedTextOnPasteboard(for target: FocusedInputTarget) -> Bool {
+        isTerminalLikeTarget(target)
+    }
+
+    private func shouldPreferTerminalTyping(for target: FocusedInputTarget, text: String) -> Bool {
+        guard isTerminalLikeTarget(target) else { return false }
+        return text.contains("\n") == false
+    }
+
+    private func isTerminalLikeTarget(_ target: FocusedInputTarget) -> Bool {
+        guard let bundleIdentifier = target.bundleIdentifier else {
+            return false
+        }
+
+        return terminalBundleIdentifiers.contains(bundleIdentifier)
     }
 }

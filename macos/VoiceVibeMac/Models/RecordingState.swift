@@ -62,7 +62,7 @@ enum RecordingState: Equatable {
         case .recording:
             return "waveform.circle.fill"
         case .transcribing:
-            return "text.badge.clock"
+            return "hourglass"
         case .readyToInsert:
             return "doc.text"
         case .inserted:

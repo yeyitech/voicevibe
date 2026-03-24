@@ -3,6 +3,7 @@ import UIKit
 
 final class KeyboardViewController: UIInputViewController {
     private static let keyboardHeight: CGFloat = 236
+    private static let keyboardBackgroundColor = UIColor.systemGray5
     private let commandStore = SharedRecorderCommandStore()
     private let viewModel = KeyboardViewModel()
     private var hostingController: UIHostingController<KeyboardRootView>?
@@ -10,7 +11,7 @@ final class KeyboardViewController: UIInputViewController {
 
     override func loadView() {
         super.loadView()
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = Self.keyboardBackgroundColor
     }
 
     override func viewDidLoad() {
@@ -44,7 +45,7 @@ final class KeyboardViewController: UIInputViewController {
     private func setupKeyboardView() {
         let controller = UIHostingController(rootView: makeRootView())
         controller.view.translatesAutoresizingMaskIntoConstraints = false
-        controller.view.backgroundColor = .systemBackground
+        controller.view.backgroundColor = Self.keyboardBackgroundColor
 
         addChild(controller)
         view.addSubview(controller.view)
