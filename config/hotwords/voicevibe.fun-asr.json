@@ -1,0 +1,37 @@
+{
+  "prefix": "voicevibe",
+  "target_model": "fun-asr",
+  "region": "beijing",
+  "entries": [
+    {
+      "text": "VoiceVibe",
+      "weight": 5,
+      "lang": "en"
+    },
+    {
+      "text": "阿里云百炼",
+      "weight": 5,
+      "lang": "zh"
+    },
+    {
+      "text": "DashScope",
+      "weight": 5,
+      "lang": "en"
+    },
+    {
+      "text": "Paraformer",
+      "weight": 4,
+      "lang": "en"
+    },
+    {
+      "text": "FunASR",
+      "weight": 4,
+      "lang": "en"
+    },
+    {
+      "text": "热词表",
+      "weight": 3,
+      "lang": "zh"
+    }
+  ]
+}

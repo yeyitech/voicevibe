@@ -1,0 +1,57 @@
+appId: com.voicevibe.desktop
+productName: VoiceVibe
+copyright: Copyright © 2026 VoiceVibe
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist-electron/main/**/*
+  - dist-electron/preload/**/*
+  - dist-electron/renderer/**/*
+  - package.json
+  - node_modules/ws/**/*
+  - node_modules/iohook-macos/**/*
+  - '!**/*.map'
+  - '!**/{CHANGELOG.md,README.md,README,readme.md,readme}'
+  - '!**/{test,tests,__tests__,example,examples}'
+  - '!**/{.DS_Store,.git,.gitignore}'
+
+asar: true
+asarUnpack:
+  - '**/node_modules/iohook-macos/**/*'
+
+mac:
+  target:
+    - dmg
+    - zip
+  icon: build/icon.icns
+  category: public.app-category.productivity
+  artifactName: ${productName}-${version}-mac-${arch}.${ext}
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  extendInfo:
+    NSMicrophoneUsageDescription: VoiceVibe needs microphone access to record speech and transcribe it into text.
+    NSAppleEventsUsageDescription: VoiceVibe needs automation access to paste transcribed text into the active application.
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+
+dmg:
+  format: UDZO
+  internetEnabled: false
+  window:
+    width: 540
+    height: 380
+  contents:
+    - x: 140
+      y: 180
+      type: file
+    - x: 400
+      y: 180
+      type: link
+      path: /Applications
+
+npmRebuild: false
+buildDependenciesFromSource: false
+nodeGypRebuild: false
