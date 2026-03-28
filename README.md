@@ -24,6 +24,12 @@ VoiceVibe 是一个桌面优先、开源、可私有化的语音输入工具。
 - 不做手机端键盘，把精力集中在桌面体验
 - 用 Electron 做桌面壳，方便未来继续扩到更多桌面平台
 
+项目治理入口:
+
+- 贡献说明: `CONTRIBUTING.md`
+- 行为准则: `CODE_OF_CONDUCT.md`
+- 安全披露: `SECURITY.md`
+
 ## 这是什么
 
 VoiceVibe 目前是一个 `Electron + React + TypeScript` 桌面应用。

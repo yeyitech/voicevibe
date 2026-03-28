@@ -4,6 +4,13 @@
 
 VoiceVibe 聚焦桌面语音输入，不做手机端第三方输入法。
 
+开始贡献前，建议先看:
+
+- `README.md`
+- `docs/quickstart.md`
+- `CODE_OF_CONDUCT.md`
+- `SECURITY.md`
+
 优先欢迎的贡献方向:
 
 - 桌面输入体验优化
@@ -41,6 +48,13 @@ npm run build
 3. 是否改动了权限、录音、插入逻辑
 4. 是否做过本地构建或手动验证
 
+仓库已经提供了 PR 模板，请按模板补齐:
+
+- 变更摘要
+- 用户影响
+- 验证方式
+- 风险说明
+
 ## Provider changes
 
 如果你增加新的 provider，请同时补齐:
@@ -53,3 +67,9 @@ npm run build
 ## Release
 
 打 `v*` tag 会触发 GitHub Actions 构建 macOS release 包。
+
+## Security
+
+如果你发现的是漏洞或敏感问题，不要开公开 issue。
+
+请按 `SECURITY.md` 里的流程私下报告。
