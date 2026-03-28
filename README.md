@@ -2,6 +2,10 @@
 
 > Open-source desktop voice typing inspired by Typeless.
 
+<p align="center">
+  <img src="./docs/assets/voicevibe-banner.png" alt="VoiceVibe desktop voice typing banner" width="100%" />
+</p>
+
 VoiceVibe 是一个桌面优先、开源、可私有化的语音输入工具。
 
 它借鉴了 Typeless 这类产品里最顺手的交互模型:

@@ -1,0 +1,115 @@
+name: Bug Report
+description: Report a reproducible problem in VoiceVibe
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug report.
+
+        Before submitting:
+        - Confirm you are on the latest release.
+        - Check `README.md` and `docs/quickstart.md` for setup and permission steps.
+        - If the issue is provider-specific, include the provider and the exact error message.
+  - type: input
+    id: version
+    attributes:
+      label: VoiceVibe version
+      description: Which release are you running?
+      placeholder: v0.1.2
+    validations:
+      required: true
+  - type: dropdown
+    id: install_channel
+    attributes:
+      label: Install package
+      options:
+        - macOS arm64 (.dmg)
+        - macOS arm64 (.zip)
+        - macOS x64 (.dmg)
+        - macOS x64 (.zip)
+        - Built from source
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: macos_version
+    attributes:
+      label: macOS version
+      placeholder: macOS 15.4
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Provider
+      options:
+        - DashScope
+        - Volcengine
+        - OpenWhisper
+        - VibeVoice Server
+        - Not provider-specific
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Recording / microphone
+        - Global hotkey
+        - Accessibility / text insertion
+        - Provider configuration
+        - Transcription result quality
+        - Personal terms / hotwords
+        - Packaging / installation
+        - Settings UI
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide a minimal and repeatable sequence.
+      placeholder: |
+        1. Open VoiceVibe
+        2. Select Volcengine provider
+        3. Hold Fn and speak for 3 seconds
+        4. Release key
+        5. See error in overlay
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: Transcript should be inserted into the focused input field.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: Nothing is inserted and the app falls back to clipboard.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Error messages, logs, or screenshots
+      description: Paste stack traces, provider error payloads, or screenshots here.
+      render: shell
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Confirmations
+      options:
+        - label: I have granted microphone permission.
+          required: true
+        - label: I have granted accessibility permission if text insertion is involved.
+          required: false
+        - label: I can reproduce this issue on the latest release.
+          required: true

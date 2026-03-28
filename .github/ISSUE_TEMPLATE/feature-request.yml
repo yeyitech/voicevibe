@@ -1,0 +1,83 @@
+name: Feature Request
+description: Propose a product or developer-facing improvement for VoiceVibe
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea.
+
+        The most useful requests are concrete:
+        - describe the workflow that is blocked today
+        - describe the expected behavior
+        - explain why existing providers or settings are not enough
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: What workflow is currently painful or impossible?
+      placeholder: I want to keep a different personal term set for different workspaces.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the feature you want to see.
+      placeholder: Add multiple term libraries and allow switching them per provider.
+    validations:
+      required: true
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Feature area
+      options:
+        - Provider integration
+        - Personal terms / hotwords
+        - Global hotkey workflow
+        - Recording / overlay UX
+        - Text insertion
+        - Packaging / release
+        - Documentation
+        - Developer tooling
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: provider
+    attributes:
+      label: Related provider
+      options:
+        - DashScope
+        - Volcengine
+        - OpenWhisper
+        - VibeVoice Server
+        - All providers
+        - Not provider-specific
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: What are you doing today instead?
+      placeholder: I manually edit prompt hints before every OpenWhisper session.
+  - type: textarea
+    id: impact
+    attributes:
+      label: Why this matters
+      description: Explain the user impact, not just the implementation idea.
+      placeholder: This would make domain-specific dictation much more reliable for teams with many project code names.
+    validations:
+      required: true
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      options:
+        - label: I am willing to help test this feature.
+          required: false
+        - label: I am willing to submit a pull request for this feature.
+          required: false
